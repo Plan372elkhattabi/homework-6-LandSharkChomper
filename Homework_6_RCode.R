@@ -1,65 +1,32 @@
----
-title: PLAN 372 Homework 6
-author: Hunter Robinson
----
-
-```{r}
 library(tidyverse)
-```
 
-```{r}
+
+getwd()
+
+
 Tree_Data <- read.csv("TS3_Raw_Tree_Data.csv")
-```
-
-# Question 1
-
-```{r}
 str_match(Tree_Data$City, "^([:alpha:]+), ([:upper:]+)$")
 Tree_Data[,c("City", "State")] = str_match(Tree_Data$City, "^([:alpha:]+), ([:upper:]+)$")[,2:3]
-
 ggplot(data = Tree_Data, aes(x= State) )+
   geom_bar()
-```
 
-Usually around 1000 for most states, NA is around 1500 and CA is a little less than 3500
-
-# Question 2
-
-```{r}
 NC_SC_Tree <- Tree_Data %>% 
   filter(str_detect(State,"[NS]C")) #checks for NC or SC. 
 ggplot(data = NC_SC_Tree, aes(x= City) )+
   geom_bar()
-```
 
-Its just Charleston, SC and Charlotte, NC.
-
-# Question 3
-
-```{r}
 str_match(NC_SC_Tree$ScientificName, "^([:alpha:]+) ([:alpha:]+[:punct:]*)$") 
 #there are a few of the scientific names that end in a "." so this adds optional punct
 NC_SC_Tree[,c("Genus", "Species")] = 
   str_match(NC_SC_Tree$ScientificName, "^([:alpha:]+) ([:alpha:]+[:punct:]*)$")[,2:3]
-#seperates the genus into Genus column and species into Species Column 
-
-NC_SC_Tree %>% 
-  group_by(Genus) %>% #groups by genus
-  summarise(average_diameter = mean(AvgCdia..m.)) %>% #finds the mean diameter
-  ungroup
 
 NC_SC_Tree %>% 
   group_by(Genus) %>% #groups by genus
   summarise(average_diameter = mean(AvgCdia..m.)) %>% #finds the mean diameter
   ungroup %>% 
   slice_max(average_diameter, n = 1) #takes the top average diameter
-```
 
-Largest crown diameter is the Quercus with an average diameter of 13.62.
-
-# Question 4
-
-```{r}
+  
 Age_Comparison <- NC_SC_Tree %>% 
   group_by(Genus) %>% #groups by genus
   summarise(average_diameter = mean(AvgCdia..m.), #finds the mean diameter
@@ -68,26 +35,12 @@ Age_Comparison <- NC_SC_Tree %>%
 
 ggplot(Age_Comparison, aes(x = average_age, y = average_diameter, colour = Genus)) +
   geom_point()
-```
 
-Quercus has the oldest average age and the highest average diameter, so that does explain the previous question.
 
-#AI reflection 
-I was trying to figure out how to display the top average diameter so I googled to see how I might do that and found slice_max. That was a really cool thing that just works. Other than that I didn't really use anything else.I also learned from stack overflow the n_distinct command that is a pretty cool way to grab distinct values. 
+Species_Tree <- Tree_Data
+Species_Tree[,c("Genus", "Species")] = 
+  str_match(Species_Tree$ScientificName, "^([:alpha:]+)[:space:]*[xX]*[:space:]([:alpha:]+[:punct:]*)")[,2:3]
 
-# Extra Credit
-
-## Genus Recommendation
-
-```{r}
-#I just used the plot for question #4
-```
-
-Genera Recommendation: Betula has an average diameter of around 10.5 and an average age of slightly less than 20, making it the big winner for low age and high diameter (it is just the better Carya to be frank). Another alternative would be Acer, which is the around 25 years average age and has around 11.5 average diameter. That's a good middle ground.
-
-## Species
-
-```{r}
 Species_Tree <- Tree_Data
 Species_Tree[,c("Genus", "Species")] = 
   str_match(Species_Tree$ScientificName, "^([:alpha:]+)[:space:]*[xX]*[:space:]([:alpha:]+[:punct:]*)")[,2:3]
@@ -98,11 +51,10 @@ Species_Tree[,c("Genus", "Species")] =
 Unique_Species <- Species_Tree %>% 
   group_by(Genus) %>% 
   summarise(Unique_Species_Count = n_distinct(Species)) %>% 
-  ungroup #gives the unique amountspecies per genus
-Unique_Species
-#enjoy the tiniest y axis text. but its in column plot form.
+  ungroup
+
 ggplot(Unique_Species, aes(y = Genus, x = Unique_Species_Count)) +
   geom_col()+
   theme(axis.text.y = element_text(size = 5))
-```
-Pinus has the most unique species with 15.
+
+                
