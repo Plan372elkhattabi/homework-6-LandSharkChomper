@@ -8,6 +8,7 @@ library(tidyverse)
 ```
 
 ```{r}
+#Reading data
 Tree_Data <- read.csv("TS3_Raw_Tree_Data.csv")
 ```
 
