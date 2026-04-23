@@ -8,8 +8,8 @@ library(tidyverse)
 ```
 
 ```{r}
-#Reading data
-Tree_Data <- read.csv("TS3_Raw_Tree_Data.csv")
+#Github will not render if it isnt in a data folder
+Tree_Data <- read.csv("data/TS3_Raw_Tree_Data.csv")
 ```
 
 # Question 1
