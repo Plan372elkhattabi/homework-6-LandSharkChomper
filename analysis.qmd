@@ -8,9 +8,11 @@ library(tidyverse)
 ```
 
 ```{r}
-#Github will not render if it isnt in a data folder
+#Github will not render this for some reason
 Tree_Data <- read.csv("data/TS3_Raw_Tree_Data.csv")
+Tree_Data <- read.csv("TS3_Raw_Tree_Data.csv")
 ```
+
 
 # Question 1
 
